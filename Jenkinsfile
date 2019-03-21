@@ -18,6 +18,9 @@ pipeline {
 				script {
 					image = docker.build("docker-io.dbc.dk/python3-build-image:${DOCKER_TAG}")
 					image.push()
+					if(env.BRANCH_NAME == "master") {
+						image.push("latest")
+					}
 				}
 			}
 		}
