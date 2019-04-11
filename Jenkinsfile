@@ -16,7 +16,7 @@ pipeline {
 		stage("build") {
 			steps {
 				script {
-					image = docker.build("docker-io.dbc.dk/python3-build-image:${DOCKER_TAG}")
+					image = docker.build("docker.dbc.dk/build-env:${DOCKER_TAG}")
 					image.push()
 					if(env.BRANCH_NAME == "master") {
 						image.push("latest")
