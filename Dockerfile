@@ -6,7 +6,7 @@ RUN apt-get update && \
 
 RUN pip install -U pip wheel twine deployversioner Sphinx dbc_pytools pyyaml requests
 
-COPY simple_validation.py /usr/local/bin/simple_validation.py
+COPY webservice_validation.py /usr/local/bin/webservice_validation.py
 
 USER python
 WORKDIR /home/python
