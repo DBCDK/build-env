@@ -39,15 +39,16 @@ def validate(endpoint, spec):
             data=data, **requests_parameters)
         if result.status_code == validation["response"]["status_code"]:
             response_type_json = get_field(validation["response"], "json", True)
+            response_len = get_field(validation["response"], "len", 1)
             if response_type_json:
                 try:
-                    if len(result.json()) > 0:
+                    if len(result.json()) >= response_len:
                         results.append(True)
                 except json.JSONDecodeError as e:
                     print(f"validation {i} {validation_path} failed: couldn't parse response as json - {e}")
                     results.append(False)
             else:
-                results.append(len(result.text) > 0)
+                results.append(len(result.text) >= response_len)
         else:
             print(f"validation {i} {validation_path} failed: result was {result.text}")
             results.append(False)
