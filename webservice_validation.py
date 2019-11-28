@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import sys
 
 import requests
 import yaml
@@ -55,4 +56,5 @@ def validate(endpoint, spec):
 if __name__ == "__main__":
     args = setup_args()
     spec = load_spec(args.validation_spec)
-    validate(args.endpoint, spec)
+    if not validate(args.endpoint, spec):
+        sys.exit(1)
