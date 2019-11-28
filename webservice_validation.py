@@ -21,8 +21,8 @@ def load_spec(path):
     with open(path) as fp:
         return yaml.load(fp, Loader=yaml.Loader)
 
-def get_field(spec, name):
-    return spec[name] if name in spec else None
+def get_field(spec, name, default=None):
+    return spec[name] if name in spec else default
 
 def validate(endpoint, spec):
     results = []
@@ -33,8 +33,9 @@ def validate(endpoint, spec):
         url = f"{endpoint}/{validation_path}"
         headers = get_field(validation, "headers")
         data = get_field(validation, "data")
+        requests_parameters = get_field(validation, "requests-parameters", {})
         result = methods[validation["method"]](url, headers=headers,
-            data=data)
+            data=data, **requests_parameters)
         if result.status_code == validation["response"]["status_code"] and \
                 len(result.json()) > 0:
             results.append(True)
