@@ -34,6 +34,8 @@ def validate(endpoint, spec):
         url = f"{endpoint}/{validation_path}"
         headers = get_field(validation, "headers")
         data = get_field(validation, "data")
+        if data is not None:
+            data = data.encode("utf8")
         requests_parameters = get_field(validation, "requests-parameters", {})
         result = methods[validation["method"]](url, headers=headers,
             data=data, **requests_parameters)
