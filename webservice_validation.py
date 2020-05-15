@@ -46,6 +46,9 @@ def validate(endpoint, spec):
                 try:
                     if len(result.json()) >= response_len:
                         results.append(True)
+                    else:
+                        print(f"validation {i} {validation_path} failed: result {result.json()} didn't satisfy the required length {response_len}")
+                        results.append(False)
                 except json.JSONDecodeError as e:
                     print(f"validation {i} {validation_path} failed: couldn't parse response as json - {e}")
                     results.append(False)
