@@ -53,7 +53,10 @@ def validate(endpoint, spec):
                     print(f"validation {i} {validation_path} failed: couldn't parse response as json - {e}")
                     results.append(False)
             else:
-                results.append(len(result.text) >= response_len)
+                res = len(result.text) >= response_len
+                results.append(res)
+                if not res:
+                    print(f"validation {i} {validation_path} failed: expected response length {response_len}, got {len(result.text)}")
         else:
             print(f"validation {i} {validation_path} failed: result was {result.text}")
             results.append(False)
