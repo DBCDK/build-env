@@ -8,11 +8,6 @@ import jsonpath_ng
 import requests
 import yaml
 
-methods = {
-    "get": requests.get,
-    "post": requests.post
-}
-
 def setup_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("endpoint")
@@ -27,6 +22,15 @@ def get_field(spec, name, default=None):
     return spec[name] if name in spec else default
 
 def validate(endpoint, spec):
+    # This object is placed here in order to make mocks work. If the object
+    # is placed in the global scope like previously, mocking doesn't work
+    # because the functions are read on import of the module while mocking
+    # only takes effect on each call of the test methods.
+    methods = {
+        "get": requests.get,
+        "post": requests.post
+    }
+
     results = []
     for i, validation in enumerate(spec):
         validation_path = validation["path"]

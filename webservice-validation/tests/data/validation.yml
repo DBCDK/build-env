@@ -1,0 +1,16 @@
+- validation:
+  path: /suggest
+  method: post
+  headers: {"Authorization": "bearer token"}
+  data: '{"q": "kultu", "rows": 10, "agency": "190101"}'
+  response:
+    status_code: 200
+    jsonpath: "response"
+- validation:
+  path: /suggest
+  method: post
+  headers: {"Authorization": "bearer token"}
+  data: '{"q": "erindr", "rows": 10, "agency": "874260", "branch": "Greve Gymnasium"}'
+  response:
+    status_code: 200
+    jsonpath: "response"

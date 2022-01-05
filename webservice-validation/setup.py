@@ -8,7 +8,7 @@ setup(name="webservice-validation",
     packages=["webservice_validation"],
     description="",
     provides=["webservice_validation"],
-    install_requires=["jsonpath-ng", "requests", "pyyaml"],
+    install_requires=["jsonpath-ng", "requests", "rrflow", "pyyaml"],
     entry_points=
         {"console_scripts": [
             "webservice-validation = webservice_validation.webservice_validation:main",
