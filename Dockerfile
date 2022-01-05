@@ -19,7 +19,4 @@ COPY --chown=python webservice-validation webservice-validation
 RUN cd webservice-validation && \
 	pip install --user .
 
-# Compatibility with the old method of calling the python file directly
-RUN ln -s /home/python/.local/bin/webservice-validation .local/bin/webservice_validation.py
-
 ENV PATH=/home/python/.local/bin:$PATH
