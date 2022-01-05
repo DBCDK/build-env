@@ -10,9 +10,13 @@ RUN apt-get install -y libnss-unknown
 # in the docker container, such as when running the container from a jenkins pipeline.
 # (For some reason you get id errors if installing it in the same command as e.g. ssh)
 
-RUN pip install -U pip wheel twine deployversioner Sphinx dbc_pytools pyyaml requests pytest.xdist pytest-cov jsonpath-ng
-
-COPY webservice_validation.py /usr/local/bin/webservice_validation.py
+RUN pip install -U pip wheel twine deployversioner Sphinx dbc_pytools pyyaml requests pytest.xdist pytest-cov
 
 USER python
 WORKDIR /home/python
+
+COPY --chown=python webservice-validation webservice-validation
+RUN cd webservice-validation && \
+	pip install --user .
+
+ENV PATH=/home/python/.local/bin:$PATH

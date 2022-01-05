@@ -79,8 +79,11 @@ def validate(endpoint, spec):
             results.append(False)
     return all(results)
 
-if __name__ == "__main__":
+def main():
     args = setup_args()
     spec = load_spec(args.validation_spec)
     if not validate(args.endpoint, spec):
         sys.exit(1)
+
+if __name__ == "__main__":
+    main()
