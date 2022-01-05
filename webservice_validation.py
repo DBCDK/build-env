@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 
+import jsonpath_ng
 import requests
 import yaml
 
@@ -43,11 +44,27 @@ def validate(endpoint, spec):
             response_type_json = get_field(validation["response"], "json", True)
             response_len = get_field(validation["response"], "len", 1)
             if response_type_json:
+                jsonpath = get_field(validation["response"], "jsonpath")
+                if jsonpath is not None:
+                    try:
+                        exp = jsonpath_ng.parse(jsonpath)
+                    except TypeError as e:
+                        print(f"validation {i} {validation_path} failed: Error parsing jsonpath {jsonpath}: {e}", file=sys.stderr)
+                        results.append(False)
+                        continue
+                    m = exp.find(result.json())
+                    if len(m) == 0:
+                        print(f"validation {i} {validation_path} failed: no matches found for jsonpath {jsonpath}", file=sys.stderr)
+                        results.append(False)
+                        continue
+                    o = m[0].value
+                else:
+                    o = result.json()
                 try:
-                    if len(result.json()) >= response_len:
+                    if len(o) >= response_len:
                         results.append(True)
                     else:
-                        print(f"validation {i} {validation_path} failed: result {result.json()} didn't satisfy the required length {response_len}")
+                        print(f"validation {i} {validation_path} failed: result {o} didn't satisfy the required length {response_len}")
                         results.append(False)
                 except json.JSONDecodeError as e:
                     print(f"validation {i} {validation_path} failed: couldn't parse response as json - {e}")
