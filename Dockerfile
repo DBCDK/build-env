@@ -12,11 +12,9 @@ RUN apt-get install -y libnss-unknown
 
 RUN pip install -U pip wheel twine deployversioner Sphinx dbc_pytools pyyaml requests pytest.xdist pytest-cov
 
+COPY webservice-validation webservice-validation
+RUN cd webservice-validation && \
+	pip install .
+
 USER python
 WORKDIR /home/python
-
-COPY --chown=python webservice-validation webservice-validation
-RUN cd webservice-validation && \
-	pip install --user .
-
-ENV PATH=/home/python/.local/bin:$PATH
