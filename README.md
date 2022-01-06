@@ -34,12 +34,21 @@ optional arguments:
 
 ```
 
-### webservice\_validation.py
+### webservice-validation
 A program for validating responses from a webservice.
 
 The validation spec must be yaml and consist of a list of validation objects.
 The format will likely change slightly as we begin to use it and
 discover shortcomings.
+
+The specific part of the response to be validated (at the moment
+validation means checking if the object has a length equal to or greater
+than the value specified by `response.len` in the validation spec with a
+default of 1) can be extracted with jsonpath using
+`response.jsonpath`. All of the jsonpath specification is supported, but
+only the most simple use-cases are tested as of the initial commit.
+- <https://goessner.net/articles/JsonPath/>
+- <https://pypi.org/project/jsonpath-ng/>
 
 Ex:
 ```yaml
@@ -48,14 +57,15 @@ Ex:
   method: post
   data: '["666*fhistorie", "666*fpolitik"]'
   response:
+    jsonpath: "response"
     status_code: 200
   headers: {"content-type": "application/json"}
 ```
 
 #### Help
 ```
-$ webservice_validation.py -h
-usage: webservice_validation.py [-h] endpoint validation-spec
+$ webservice-validation -h
+usage: webservice-validation [-h] endpoint validation-spec
 
 positional arguments:
   endpoint
