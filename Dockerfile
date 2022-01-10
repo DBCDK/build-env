@@ -12,6 +12,14 @@ RUN apt-get install -y libnss-unknown
 
 RUN pip install -U pip wheel twine deployversioner Sphinx dbc_pytools pyyaml requests pytest.xdist pytest-cov
 
+# The cargo directory must be writable for all users who are going to build since that's where cargo stores downloaded packages.
+RUN mkdir /rust && chmod 777 /rust
+ENV RUSTUP_HOME=/rust
+ENV CARGO_HOME=/rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o rustup.sh && \
+	sh ./rustup.sh -y
+ENV PATH=/rust/bin:$PATH
+
 COPY webservice-validation webservice-validation
 RUN cd webservice-validation && \
 	pip install .
