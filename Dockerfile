@@ -24,5 +24,8 @@ COPY webservice-validation webservice-validation
 RUN cd webservice-validation && \
 	pip install .
 
+RUN curl -L https://artifactory.dbc.dk/artifactory/ai-generic/kube-tools-rs/kube-tools -o /usr/local/bin/kube-tools && \
+	chmod 755 /usr/local/bin/kube-tools
+
 USER python
 WORKDIR /home/python
