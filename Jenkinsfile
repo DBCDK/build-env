@@ -37,7 +37,7 @@ pipeline {
 		stage("build") {
 			steps {
 				script {
-					image = docker.build("docker.dbc.dk/build-env:${DOCKER_TAG}", "--no-cache --pull .")
+					image = docker.build("docker-dbc.artifacts.dbccloud.dk/build-env:${DOCKER_TAG}", "--no-cache --pull .")
 					image.push()
 					if(env.BRANCH_NAME == "master") {
 						image.push("latest")
