@@ -37,10 +37,20 @@ pipeline {
 		stage("build") {
 			steps {
 				script {
-					image = docker.build("docker-dbc.artifacts.dbccloud.dk/build-env:${DOCKER_TAG}", "--no-cache --pull .")
-					image.push()
-					if(env.BRANCH_NAME == "master") {
-						image.push("latest")
+					image = docker.build("build-env:${DOCKER_TAG}", "--no-cache --pull .")
+                    docker.withRegistry("docker-dbc.artifacts.dbccloud.dk", "docker") {
+                        image.push()
+                        if (env.BRANCH_NAME ==~ /master|trunk/) {
+                            app.push "latest"
+                            app.push version
+                        }
+					}
+                    docker.withRegistry("docker.dbc.dk", "docker") {
+                        image.push()
+                        if (env.BRANCH_NAME ==~ /master|trunk/) {
+                            app.push "latest"
+                            app.push version
+                        }
 					}
 				}
 			}
