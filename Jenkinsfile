@@ -42,14 +42,12 @@ pipeline {
                         image.push()
                         if (env.BRANCH_NAME ==~ /master|trunk/) {
                             image.push "latest"
-                            image.push version
                         }
 					}
                     docker.withRegistry("https://docker.dbc.dk", "docker") {
                         image.push()
                         if (env.BRANCH_NAME ==~ /master|trunk/) {
                             image.push "latest"
-                            image.push version
                         }
 					}
 				}
