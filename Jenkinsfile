@@ -41,15 +41,15 @@ pipeline {
                     docker.withRegistry("https://docker-dbc.artifacts.dbccloud.dk", "docker") {
                         image.push()
                         if (env.BRANCH_NAME ==~ /master|trunk/) {
-                            app.push "latest"
-                            app.push version
+                            image.push "latest"
+                            image.push version
                         }
 					}
                     docker.withRegistry("https://docker.dbc.dk", "docker") {
                         image.push()
                         if (env.BRANCH_NAME ==~ /master|trunk/) {
-                            app.push "latest"
-                            app.push version
+                            image.push "latest"
+                            image.push version
                         }
 					}
 				}
