@@ -17,7 +17,7 @@ def setup_args():
         type=argparse.FileType(encoding="utf-8"),
         help="Validate from a list of endpoints instead of the single positional argument endpoint. The format should be a list of object containing an `ip` key with the endpoint. This output can be fetched with the `kube-tools ip-addresses` command.")
     parser.add_argument("-p", "--port", type=int, help="Port to query on the service which is to be validated.")
-    parser.add_argument("--verbose", metavar="verbose", help="Print more information about the validation process.")
+    parser.add_argument("--verbose", metavar="verbose", help="Print more information about the validation process.", default='false')
     return parser.parse_args()
 
 def load_spec(path):
