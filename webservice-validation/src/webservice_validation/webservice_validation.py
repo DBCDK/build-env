@@ -7,6 +7,7 @@ import sys
 import jsonpath_ng
 import requests
 import yaml
+from datetime import datetime
 
 def setup_args():
     parser = argparse.ArgumentParser()
@@ -16,6 +17,7 @@ def setup_args():
         type=argparse.FileType(encoding="utf-8"),
         help="Validate from a list of endpoints instead of the single positional argument endpoint. The format should be a list of object containing an `ip` key with the endpoint. This output can be fetched with the `kube-tools ip-addresses` command.")
     parser.add_argument("-p", "--port", type=int, help="Port to query on the service which is to be validated.")
+    parser.add_argument("--verbose", metavar="verbose", help="Print more information about the validation process.")
     return parser.parse_args()
 
 def load_spec(path):
@@ -28,7 +30,7 @@ def get_field(spec, name, default=None):
 def print_failure_message(url, validation_idx, validation_path, message):
     print(f"validation {validation_idx} {validation_path} [{url}] failed: {message}", file=sys.stderr)
 
-def validate(endpoint, spec, port = None):
+def validate(endpoint, spec, port = None, verbose = False):
     # This object is placed here in order to make mocks work. If the object
     # is placed in the global scope like previously, mocking doesn't work
     # because the functions are read on import of the module while mocking
@@ -52,6 +54,9 @@ def validate(endpoint, spec, port = None):
         data = get_field(validation, "data")
         if data is not None:
             data = data.encode("utf8")
+        if verbose:
+            date_time = datetime.now().strftime("%Y-%m-%d, %H:%M:%S")
+            print(f"({date_time}) {i}: endpoint: {url}, data: {data}")
         requests_parameters = get_field(validation, "requests-parameters", {})
         result = methods[validation["method"]](url, headers=headers,
             data=data, **requests_parameters)
@@ -96,9 +101,10 @@ def validate(endpoint, spec, port = None):
 
 def main():
     args = setup_args()
+    verbose = args.verbose.lower() in ["true", "yes", "1"]
     spec = load_spec(args.validation_spec)
     if args.from_endpoints_json_file is not None and args.endpoint != "from-endpoints-json-file":
-        print("You cannot specify both --from-endpoints-json-file and a positional endoint. If you use --from-endpoints-json-file, set the positional endpoint argument to be \"from-endpoints-json-file\".")
+        print("You cannot specify both --from-endpoints-json-file and a positional endpoint. If you use --from-endpoints-json-file, set the positional endpoint argument to be \"from-endpoints-json-file\".")
         sys.exit(1)
     elif args.from_endpoints_json_file is not None:
         try:
@@ -110,7 +116,7 @@ def main():
             print("Error parsing input given to --from-endpoints-json-file")
             sys.exit(1)
     else:
-        if not validate(args.endpoint, spec, args.port):
+        if not validate(args.endpoint, spec, args.port, verbose):
             sys.exit(1)
 
 if __name__ == "__main__":
