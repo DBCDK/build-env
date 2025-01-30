@@ -1,1 +1,5 @@
 *.swp
+.idea/
+*__pycache__/
+webservice-validation/build/
+webservice-validation/src/webservice_validation.egg-info/
