@@ -4,6 +4,9 @@ def workerNode = "xp-build-i01"
 
 pipeline {
 	agent {label workerNode}
+	options {
+		disableConcurrentBuilds()
+	}
 	environment {
 		DOCKER_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
 	}
