@@ -9,12 +9,8 @@ pipeline {
 	}
 	triggers {
 		pollSCM("H/02 * * * *")
-		upstream(upstreamProjects: "Docker-base-python3",
+		upstream(upstreamProjects: "Docker-base-python3,ai/pyutils/master,ai/dbc-pytools/master",
 			threshold: hudson.model.Result.SUCCESS)
-		upstream(upstreamProjects: "ai/pyutils/master",
-			threshold: hudson.model.Result.SUCCESS)
-		upstream(upstreamProjects: "ai/dbc-pytools/master",
-			threshold: hudson.model.Result.SUCCESS)		
 	}
 	stages {
 		stage("test") {
