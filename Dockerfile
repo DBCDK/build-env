@@ -1,14 +1,23 @@
 FROM docker-dbc.artifacts.dbccloud.dk/dbc-python3
 
+ARG SONAR_SCANNER_VERSION=7.0.2.4839-linux-x64
+
 RUN useradd -m python
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends ca-certificates gcc g++ git \
+	apt-get install -y --no-install-recommends ca-certificates default-jdk wget gcc g++ git \
 	curl tar bzip2 postgresql-client zip unzip make ssh s3cmd zstd
-RUN apt-get install -y libnss-unknown
-
 # libnss-unknown is installed to be able to use ssh with user id's not present
 # in the docker container, such as when running the container from a jenkins pipeline.
 # (For some reason you get id errors if installing it in the same command as e.g. ssh)
+RUN apt-get install -y libnss-unknown
+
+RUN wget -O sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip && \
+     unzip sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip -d /opt && \
+     rm sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip && \
+     chmod +x /opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/sonar-scanner
+
+ENV SONAR_SCANNER="/opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/sonar-scanner"
+ENV PATH="$PATH:/opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/"
 
 RUN pip install -U pip wheel twine deployversioner Sphinx dbc_pytools pyyaml requests pytest.xdist pytest-cov
 
