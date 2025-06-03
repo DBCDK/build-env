@@ -1,7 +1,7 @@
 ## build-env
-This is a docker image for ci building
+This is a docker image for ci building.
 
-It is based on a python3 image and the following programs
+The image is based on the python3 base image and contains a sonar-scanner binary and the following executables:
 
 ### deploy-versioner
 A program for automatic setting new versions in kubernetes deployment
