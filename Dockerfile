@@ -11,13 +11,13 @@ RUN apt-get update && \
 # (For some reason you get id errors if installing it in the same command as e.g. ssh)
 RUN apt-get install -y libnss-unknown
 
+# Sonar-scanner install for uplad to sonarqube
 RUN wget -O sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip && \
      unzip sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip -d /opt && \
      rm sonar-scanner-cli-$SONAR_SCANNER_VERSION.zip && \
-     chmod +x /opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/sonar-scanner
-
-ENV SONAR_SCANNER="/opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/sonar-scanner"
-ENV PATH="$PATH:/opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/"
+     chmod +x /opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/sonar-scanner && \
+     ln -s /opt/sonar-scanner-$SONAR_SCANNER_VERSION/bin/sonar-scanner /usr/local/bin/sonar-scanner && \
+     chmod 755 /usr/local/bin/sonar-scanner
 
 RUN pip install -U pip wheel twine deployversioner Sphinx dbc_pytools pyyaml requests pytest.xdist pytest-cov
 
