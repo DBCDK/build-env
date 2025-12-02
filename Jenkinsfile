@@ -58,7 +58,6 @@ pipeline {
 		}
 		failure {
 			slackSend message: "build failed for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
-			updateGitlabCommitStatus name: 'build', state: 'failed'
 		}
 		aborted {
 			slackSend message: "build timed out or aborted for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
