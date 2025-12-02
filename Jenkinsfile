@@ -53,9 +53,6 @@ pipeline {
 		}
 	}
 	post {
-		success {
-			updateGitlabCommitStatus name: 'build', state: 'success'
-		}
 		unstable {
 			slackSend message: "build became unstable for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
 		}
@@ -65,9 +62,6 @@ pipeline {
 		}
 		aborted {
 			slackSend message: "build timed out or aborted for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
-		}
-		fixed {
-			updateGitlabCommitStatus name: 'build', state: 'success'
 		}
 	}
 }
