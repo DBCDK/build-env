@@ -1,6 +1,7 @@
 #!groovy
 
 def workerNode = "xp-build-i01"
+def slackReceivers = "#ai-jenkins-warnings"
 
 pipeline {
 	agent {label workerNode}
@@ -49,6 +50,17 @@ pipeline {
 					}
 				}
 			}
+		}
+	}
+	post {
+		unstable {
+			slackSend message: "build became unstable for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
+		}
+		failure {
+			slackSend message: "build failed for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
+		}
+		aborted {
+			slackSend message: "build timed out or aborted for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
 		}
 	}
 }
