@@ -42,11 +42,11 @@ pipeline {
 			steps {
 				script {
 					image = docker.build("build-env:${DOCKER_TAG}", "--no-cache --pull .")
-                    docker.withRegistry("https://docker-dbc.artifacts.dbccloud.dk", "docker") {
-                        image.push()
-                        if (env.BRANCH_NAME ==~ /master|trunk/) {
-                            image.push "latest"
-                        }
+					docker.withRegistry("https://docker-dbc.artifacts.dbccloud.dk", "docker") {
+						image.push()
+						if (env.BRANCH_NAME ==~ /master|trunk/) {
+							image.push "latest"
+						}
 					}
 				}
 			}
