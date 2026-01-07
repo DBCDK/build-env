@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "webservice-validation"
+version = "1.0.0"
+description = "Command-line tool for validating webservice responses."
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+    "jsonpath-ng",
+    "requests",
+    "pyyaml",
+]
+
+[project.scripts]
+webservice-validation = "webservice_validation.webservice_validation:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/"]
+
+[tool.ruff]
+line-length = 120
