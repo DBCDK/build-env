@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime
 
@@ -29,7 +30,8 @@ def setup_args():
 
 def load_spec(path):
     with open(path) as fp:
-        return yaml.load(fp, Loader=yaml.Loader)
+        content = os.path.expandvars(fp.read())
+    return yaml.load(content, Loader=yaml.Loader)
 
 
 def get_field(spec, name, default=None):
