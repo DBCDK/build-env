@@ -57,7 +57,9 @@ def validate(endpoint, spec, port=None, verbose=False):
     # only takes effect on each call of the test methods.
     methods = {
         "get": requests.get,
-        "post": requests.post
+        "post": requests.post,
+        "delete": requests.delete,
+        "put": requests.put
     }
 
     if endpoint[:4] != "http":
