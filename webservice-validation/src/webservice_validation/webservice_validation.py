@@ -15,16 +15,17 @@ def setup_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("endpoint")
     parser.add_argument("validation_spec", metavar="validation-spec")
-    parser.add_argument("--from-endpoints-json-file",
-                        type=argparse.FileType(encoding="utf-8"),
-                        help="Validate from a list of endpoints instead of the single positional argument endpoint."
-                             " The format should be a list of object containing an `ip` key with the endpoint. "
-                             "This output can be fetched with the `kube-tools ip-addresses` command.")
-    parser.add_argument("-p", "--port", type=int,
-                        help="Port to query on the service which is to be validated.")
-    parser.add_argument("--verbose", metavar="verbose",
-                        help="Print more information about the validation process.",
-                        default='false')
+    parser.add_argument(
+        "--from-endpoints-json-file",
+        type=argparse.FileType(encoding="utf-8"),
+        help="Validate from a list of endpoints instead of the single positional argument endpoint."
+        " The format should be a list of object containing an `ip` key with the endpoint. "
+        "This output can be fetched with the `kube-tools ip-addresses` command.",
+    )
+    parser.add_argument("-p", "--port", type=int, help="Port to query on the service which is to be validated.")
+    parser.add_argument(
+        "--verbose", metavar="verbose", help="Print more information about the validation process.", default="false"
+    )
     return parser.parse_args()
 
 
@@ -38,16 +39,11 @@ def get_field(spec, name, default=None):
     return spec[name] if name in spec else default
 
 
-def print_failure_message(url: str,
-                          validation_idx: int,
-                          validation_path: str,
-                          message: str,
-                          data: str = None):
+def print_failure_message(url: str, validation_idx: int, validation_path: str, message: str, data: str = None):
     if not data:
         print(f"validation {validation_idx} {validation_path} [{url}] failed: {message}", file=sys.stderr)
     else:
-        print(f"validation {validation_idx} {validation_path} [{url}] failed: {message}\n"
-              f"data: {data}", file=sys.stderr)
+        print(f"validation {validation_idx} {validation_path} [{url}] failed: {message}\ndata: {data}", file=sys.stderr)
 
 
 def validate(endpoint, spec, port=None, verbose=False):
@@ -55,10 +51,7 @@ def validate(endpoint, spec, port=None, verbose=False):
     # is placed in the global scope like previously, mocking doesn't work
     # because the functions are read on import of the module while mocking
     # only takes effect on each call of the test methods.
-    methods = {
-        "get": requests.get,
-        "post": requests.post
-    }
+    methods = {"get": requests.get, "post": requests.post}
 
     if endpoint[:4] != "http":
         endpoint = f"http://{endpoint}"
@@ -78,8 +71,7 @@ def validate(endpoint, spec, port=None, verbose=False):
             date_time = datetime.now().strftime("%Y-%m-%d, %H:%M:%S")
             print(f"({date_time}) {i}: endpoint: {url}, data: {data}")
         requests_parameters = get_field(validation, "requests-parameters", {})
-        result = methods[validation["method"]](url, headers=headers,
-                                               data=data, **requests_parameters)
+        result = methods[validation["method"]](url, headers=headers, data=data, **requests_parameters)
         if result.status_code == validation["response"]["status_code"]:
             response_type_json = get_field(validation["response"], "json", True)
             response_len = get_field(validation["response"], "len", 1)
@@ -89,14 +81,16 @@ def validate(endpoint, spec, port=None, verbose=False):
                     try:
                         exp = jsonpath_ng.parse(jsonpath)
                     except TypeError as e:
-                        print_failure_message(endpoint, i, validation_path,
-                                              f"Error parsing jsonpath {jsonpath}: {e}", data)
+                        print_failure_message(
+                            endpoint, i, validation_path, f"Error parsing jsonpath {jsonpath}: {e}", data
+                        )
                         results.append(False)
                         continue
                     m = exp.find(result.json())
                     if len(m) == 0:
-                        print_failure_message(endpoint, i, validation_path,
-                                              f"no matches found for jsonpath {jsonpath}", data)
+                        print_failure_message(
+                            endpoint, i, validation_path, f"no matches found for jsonpath {jsonpath}", data
+                        )
                         results.append(False)
                         continue
                     o = m[0].value
@@ -106,24 +100,30 @@ def validate(endpoint, spec, port=None, verbose=False):
                     if len(o) >= response_len:
                         results.append(True)
                     else:
-                        print_failure_message(endpoint, i, validation_path,
-                                              f"result {o} didn't satisfy the required length {response_len}",
-                                              data)
+                        print_failure_message(
+                            endpoint,
+                            i,
+                            validation_path,
+                            f"result {o} didn't satisfy the required length {response_len}",
+                            data,
+                        )
                         results.append(False)
                 except json.JSONDecodeError as e:
-                    print_failure_message(endpoint, i, validation_path,
-                                          f"couldn't parse response as json", data)
+                    print_failure_message(endpoint, i, validation_path, f"couldn't parse response as json", data)
                     results.append(False)
             else:
                 res = len(result.text) >= response_len
                 results.append(res)
                 if not res:
-                    print_failure_message(endpoint, i, validation_path,
-                                          f"expected response length {response_len}, "
-                                          f"got {len(result.text)}", data)
+                    print_failure_message(
+                        endpoint,
+                        i,
+                        validation_path,
+                        f"expected response length {response_len}, got {len(result.text)}",
+                        data,
+                    )
         else:
-            print_failure_message(endpoint, i, validation_path,
-                                  f"result was {result.text}", data)
+            print_failure_message(endpoint, i, validation_path, f"result was {result.text}", data)
             results.append(False)
     return all(results)
 
@@ -134,7 +134,8 @@ def main():
     spec = load_spec(args.validation_spec)
     if args.from_endpoints_json_file is not None and args.endpoint != "from-endpoints-json-file":
         print(
-            "You cannot specify both --from-endpoints-json-file and a positional endpoint. If you use --from-endpoints-json-file, set the positional endpoint argument to be \"from-endpoints-json-file\".")
+            'You cannot specify both --from-endpoints-json-file and a positional endpoint. If you use --from-endpoints-json-file, set the positional endpoint argument to be "from-endpoints-json-file".'
+        )
         sys.exit(1)
     elif args.from_endpoints_json_file is not None:
         try:
