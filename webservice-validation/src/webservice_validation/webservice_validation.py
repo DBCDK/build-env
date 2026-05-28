@@ -51,8 +51,7 @@ def validate(endpoint, spec, port=None, verbose=False):
     # is placed in the global scope like previously, mocking doesn't work
     # because the functions are read on import of the module while mocking
     # only takes effect on each call of the test methods.
-    methods = {"get": requests.get, "post": requests.post}
-
+    methods = {"get": requests.get, "post": requests.post, "delete": requests.delete, "put": requests.put}
     if endpoint[:4] != "http":
         endpoint = f"http://{endpoint}"
     if port is not None:
