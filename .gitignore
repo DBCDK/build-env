@@ -5,3 +5,6 @@ webservice-validation/build/
 webservice-validation/src/webservice_validation.egg-info/
 .vscode/settings.json
 .claude/settings.local.json
+webservice-validation/src/webservice_validation/_build_info.py
+webservice-validation/dist/
+webservice-validation/env*/

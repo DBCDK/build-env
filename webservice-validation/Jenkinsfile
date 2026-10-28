@@ -1,0 +1,61 @@
+#!groovy
+@Library('ai') _
+def workerNode = "xp-build-i01"
+def slackReceivers = "#ai-jenkins-warnings"
+
+// The job's workspace is the build-env repo root, while test() and upload()
+// expect to run from the package directory, hence the dir() wrappers.
+pipeline {
+	environment {
+		PACKAGE='webservice-validation'
+	}
+	options {
+		gitLabConnection('isworker')
+		timestamps()
+		disableConcurrentBuilds()
+	}
+	agent {
+		docker {
+			label workerNode
+			image "docker-dbc.artifacts.dbccloud.dk/build-env"
+			alwaysPull true
+		}
+	}
+	stages {
+		stage("test") {
+			steps {
+				dir("webservice-validation") {
+					test()
+				}
+			}
+		}
+		stage("build and upload") {
+			when {
+				branch "master"
+			}
+			steps {
+				dir("webservice-validation") {
+					upload()
+				}
+			}
+		}
+	}
+	post {
+		success {
+			updateGitlabCommitStatus name: 'build', state: 'success'
+		}
+		unstable {
+			slackSend message: "build became unstable for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
+		}
+		failure {
+			slackSend message: "build failed for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
+			updateGitlabCommitStatus name: 'build', state: 'failed'
+		}
+		aborted {
+			slackSend message: "build timed out or aborted for ${env.JOB_NAME}: ${env.BUILD_URL}", channel: slackReceivers
+		}
+		fixed {
+			updateGitlabCommitStatus name: 'build', state: 'success'
+		}
+	}
+}
