@@ -35,11 +35,14 @@ pipeline {
 			}
 			steps {
 				dir("webservice-validation") {
+					// make-build-info (dbc-pytools) only looks for .git next to pyproject.toml
 					sh "ln -sfn ../.git .git"
-					try {
-						upload()
-					} finally {
-						sh "rm -f .git"
+					script {
+						try {
+							upload()
+						} finally {
+							sh "rm -f .git"
+						}
 					}
 				}
 			}
