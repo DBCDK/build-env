@@ -35,7 +35,12 @@ pipeline {
 			}
 			steps {
 				dir("webservice-validation") {
-					upload()
+					sh "ln -sfn ../.git .git"
+					try {
+						upload()
+					} finally {
+						sh "rm -f .git"
+					}
 				}
 			}
 		}
