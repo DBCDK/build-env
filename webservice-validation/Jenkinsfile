@@ -1,6 +1,6 @@
 #!groovy
 @Library('ai') _
-def workerNode = "xp-build-i01"
+def workerNode = "devel12"
 def slackReceivers = "#ai-jenkins-warnings"
 
 // The job's workspace is the build-env repo root, while test() and upload()
